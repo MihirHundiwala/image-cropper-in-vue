@@ -51,7 +51,7 @@ export default {
     },
     data () {
         return {
-            showCropper: true,
+            showCropper: false,
             imageFileType: null,
         }
     },
