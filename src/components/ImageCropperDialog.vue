@@ -5,28 +5,25 @@
         <v-card-text class="pb-3">
           <vue-cropper
             ref="cropper"
-            :containerStyle="{ 
-              width: 'fit-content', 'max-width':'450px', 
-              height: 'fit-content', 'max-height':'450px'
-            }"
+            class="image-container"
             :aspect-ratio="1 / 1"
             :guides="true"
             :background="false"
             :view-mode="3"
             drag-mode="move"
-            :src="uploadedImage"
+            :src="chosenImage"
             alt="Image not available"
           >
           </vue-cropper>
         </v-card-text>
         <v-card-actions class="py-0 mx-10">
           <v-btn
-            @click="showCropper = false"
+            @click="resetCropper"
             text color="red"
           > Cancel </v-btn>
           <v-spacer></v-spacer>
           <v-btn 
-            @click="cropUploadedImage"
+            @click="cropChosenImage"
             text color="blue"
           > Crop </v-btn>
         </v-card-actions>
@@ -45,7 +42,7 @@ export default {
         VueCropper,
     },
     props: {
-        uploadedImage: {
+        chosenImage: {
             default: null,
         },
     },
@@ -60,12 +57,29 @@ export default {
             this.showCropper = true;
             this.imageFileType = imageFileType;
             await new Promise(resolve => setTimeout(resolve, 50));
-            this.$refs.cropper.replace(this.uploadedImage);
+            this.$refs.cropper.replace(this.chosenImage);
         },
-        async cropUploadedImage(){
+
+        async resetCropper(){
+          this.$emit('onReset');
+          this.showCropper = false;
+        },
+
+        async cropChosenImage(){
             this.$emit('onCrop', this.$refs.cropper.getCroppedCanvas().toDataURL(this.imageFileType));
-            this.showCropper = false;
+            this.resetCropper();
         },
     },
 }
 </script>
+
+<style>
+.image-container {
+  max-width: 450px;
+}
+
+.image-container img {
+  /* This is important */
+  width: 100%;
+}
+</style>
